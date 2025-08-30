@@ -1,0 +1,183 @@
+@page "/NumericCore"
+@using NumericCoreCalc.Lib
+@rendermode InteractiveServer
+
+<PageTitle>Numeric Core Solver</PageTitle>
+
+<h1>Numeric Core Solver</h1>
+
+<p>
+  <FluentSwitch @bind-Value=WordMode Label=" Spoiler Mode!" />
+</p>
+
+@if(!WordMode)
+{
+    <p>Enter a number or group of 4 numbers separated with a [space]</p>
+    <div role="row1" style="padding-bottom: 1em;">
+    <FluentTextField @bind-Value=startingNumber Placeholder="Starting Number(s)"></FluentTextField>
+    </div>
+}
+else
+{
+    <p>
+        Enter a word or group of words to get associated laters. Verbose mode will return the relevant numeric core. 
+    </p>
+    <p>
+        <FluentTextArea @bind-Value=words Label="Word Mode:" Rows="12" Cols="60"/>
+    </p>
+    <p>
+     <FluentSwitch @bind-Value=verbose Label=" Verbose Mode..." />
+    </p>
+}
+
+<div>
+    <FluentButton Appearance="Appearance.Accent" @onclick="Solve">Solve</FluentButton>
+</div>
+
+
+@if(!WordMode)
+{
+    <div>
+        <p>Result: @singleResult</p>
+    </div>
+}
+
+<div>
+    @foreach(var item in Instructions)
+    {
+        <p>
+            @((MarkupString)item.Replace("|", "<br />"))
+        </p>
+    }
+</div>
+
+
+@code {
+
+  public string startingNumber = string.Empty;
+  public bool WordMode = false;
+  public bool verbose = false;
+  public string? words = string.Empty;
+
+  public string singleResult = string.Empty;
+
+  public List<string> Instructions = [];
+  
+  private void Solve()
+  {
+    Instructions = [];
+    if(!WordMode)
+    {
+        ExecuteNumbers();
+    }
+    else
+    {
+        ExecuteWords();
+    }
+  }
+
+  private void ExecuteWords()
+  {
+    if(string.IsNullOrWhiteSpace(words))
+    {
+        Instructions.Add("Please provide a word or list of words separated by [space] or [new lines]");
+        return;
+    }
+    var splitWords = words.ReplaceLineEndings(" | ").Split(' ');
+
+    var wp = new WordParse();
+    List<int> results = new List<int>();
+    foreach( var word in splitWords)
+    {
+        if(string.IsNullOrWhiteSpace(word)) continue;
+        if(word.Equals("|"))
+        {
+            results.Add(-1);
+            continue;
+        }
+        if(word.Count() != 4)
+        {
+            Instructions.Add($"Error: \"{word}\"");
+            continue;
+        }
+        var nums = wp.Parse(word);
+        var wpCalc = new NumericCoreCalculator();
+        
+        try
+        {
+            var result = wpCalc.Calculate([nums]);
+            results.Add(result);
+            if(verbose)
+                Instructions.Add($"Numeric Core for {word}: {result}");
+        }
+        catch (Exception ex)
+        {
+            results.Add(0);
+            Console.WriteLine($"Error for {word}: {ex.Message}");
+        }
+    }
+    
+    List<char> chars = new List<char>();
+    foreach (var r in results)
+    {
+        if(r == -1) chars.Add('|');
+        else if(r >= 1 && r <= 26)
+        {
+            chars.Add(wp.ValueToChar(r));
+        }
+        else
+        {
+            chars.Add('?');
+        }
+    }
+    Instructions.Add(new string(chars.ToArray()));
+  }
+
+  private void ExecuteNumbers()
+  {
+    try
+    {
+        var partitions = ParsePartitions();
+        var calc = new NumericCoreCalculator();
+        singleResult = calc.Calculate(partitions).ToString();
+    }
+    catch(Exception ex)
+    {
+        Instructions = [
+            $"Error: ",
+            ex.Message
+        ];
+    }
+  }
+
+
+  private int[][] ParsePartitions()
+  {
+    if(startingNumber.Contains(' '))
+    {
+        return GetPartitions(startingNumber.Split(' '));
+    }
+    var parse = new Parse();
+    return parse.Partitions(startingNumber);
+  }
+
+  private int[][] GetPartitions(string[] s)
+    {
+        if (s.Length == 1)
+        {
+            var parse = new Parse();
+            return parse.Partitions(s[0]);
+        }
+
+        if (s.Length == 4)
+        {
+            return new int[][] { s.Select(int.Parse).ToArray() };
+        }
+
+        throw new ArgumentException("Input must be a single number or an array of 4 separated by a [space].");
+    }
+
+
+
+
+}

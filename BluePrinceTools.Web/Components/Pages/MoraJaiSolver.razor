@@ -1,0 +1,167 @@
+@page "/MoraJai"
+@using MoraJai.Lib
+@rendermode InteractiveServer
+
+<PageTitle>Mora Jai</PageTitle>
+
+<h1>Mora Jai Solver</h1>
+
+<div role="row1" style="padding-bottom: 1em;">
+  <FluentTextField @bind-Value=row1[0] Placeholder="0,0"></FluentTextField>
+  <FluentTextField @bind-Value=row1[1] Placeholder="0,1"></FluentTextField>
+  <FluentTextField @bind-Value=row1[2] Placeholder="0,2"></FluentTextField>
+</div>
+<div role="row2" style="padding-bottom: 1em;">
+  <FluentTextField @bind-Value=row2[0] Placeholder="1,0"></FluentTextField>
+  <FluentTextField @bind-Value=row2[1] Placeholder="1,1"></FluentTextField>
+  <FluentTextField @bind-Value=row2[2] Placeholder="1,2"></FluentTextField>
+</div>
+<div role="row3" style="padding-bottom: 1em;">
+  <FluentTextField @bind-Value=row3[0] Placeholder="2,0"></FluentTextField>
+  <FluentTextField @bind-Value=row3[1] Placeholder="2,1"></FluentTextField>
+  <FluentTextField @bind-Value=row3[2] Placeholder="2,2"></FluentTextField>
+</div>
+
+
+<div>
+  <FluentSwitch @bind-Value=multiGoalEnabled Label=" Multiple Goals" />
+</div>
+<div>
+  @* if not enabled, then use single goal *@
+  @if (!multiGoalEnabled)
+  {
+    <FluentTextField @bind-Value=goal Placeholder="Goal"></FluentTextField>
+  }
+  @* if multi goal enabled, then use multi goal values *@
+  else
+  {
+    <div>
+      <FluentTextField @bind-Value=multiGoal[0] Placeholder="Goal1"></FluentTextField>
+      <FluentTextField @bind-Value=multiGoal[1] Placeholder="Goal2"></FluentTextField>
+    </div>
+    <div>
+      <FluentTextField @bind-Value=multiGoal[2] Placeholder="Goal3"></FluentTextField>
+      <FluentTextField @bind-Value=multiGoal[3] Placeholder="Goal4"></FluentTextField>
+    </div>
+    
+  }
+</div>
+
+<FluentButton Appearance="Appearance.Accent" @onclick="Solve">Solve</FluentButton>
+
+<div>
+  @foreach (var item in Instructions)
+  {
+    <div>
+      @((MarkupString)item.ReplaceLineEndings("<br />"))
+    </div>
+  }
+</div>
+
+@code {
+
+  public List<string?> row1 = [ null, null, null ];
+  public List<string?> row2 = [ null, null, null ];
+  public List<string?> row3 = [ null, null, null ];
+
+  public string? goal = null;
+  public List<string?> multiGoal = [ null, null, null, null];
+  public bool multiGoalEnabled = false;
+
+  public List<string> Instructions = [];
+  
+  private void Solve()
+  {
+    //init instructions back to empty
+    Instructions = ["Calculating..."];
+
+    if(!multiGoalEnabled) multiGoal = [ goal, goal, goal, goal ];
+
+    (var success, var board, var goals) = Parse();
+
+    if(!success)
+    {
+      if(Instructions.Count == 0 || Instructions.First() == "Calculating...")
+        Instructions = [ "Error..." ];
+      return;
+    }
+
+
+    var initstate = new GameState(
+      board: board,
+      Goal: goals
+    );
+
+    var solver = new Solver();
+    var result = solver.SolveStart(initstate);
+
+    if(result is null)
+    {
+      Instructions = [ "No Solution Found..."];
+      return;
+    }
+    var steps = SolutionNode.GetSolution(result);
+    Instructions = [ "Solution found: ", $"Steps: {steps.Count}"];
+    Instructions.AddRange(steps);
+    foreach(var item in Instructions)
+    {
+      Console.WriteLine(item);
+    }
+
+  }
+
+  private (bool, TileColor[,],TileColor[]) Parse()
+  {
+    TileColor[,] board = new TileColor[3, 3];
+    TileColor[] goalColor = new TileColor[4]; 
+    bool success = false;
+
+    if(
+      row1.Any(x => x is null) || 
+      row2.Any(x => x is null) ||
+      row3.Any(x => x is null) ||
+      multiGoal.Any(x => x is null)
+    )
+    {
+      Instructions = ["Please ensure values are provided for all tiles"];
+      return (success, board, goalColor);
+    }
+
+
+    try
+    {
+      // parse colors from input
+      for (int i = 0; i < 3; i++)
+      {
+        //we know from null check above that it's safe.
+        board[0, i] = Enum.Parse<TileColor>(row1[i]!, true);
+        board[1, i] = Enum.Parse<TileColor>(row2[i]!, true);
+        board[2, i] = Enum.Parse<TileColor>(row3[i]!, true);
+      }
+
+      for (int i = 0; i < 4; i++)
+      {
+        //we know from null check above that it's safe.
+        goalColor[i] = Enum.Parse<TileColor>(multiGoal[i]!, true);
+      }
+
+      success = true;
+
+      return (success, board, goalColor);
+    }
+    catch (ArgumentException)
+    {
+      Instructions = ["Invalid color input. Please use valid color names.",
+                "Valid color options are:"];
+      foreach (var color in Enum.GetNames(typeof(TileColor)))
+      {
+        Instructions.Add($"- {color.ToLower()}");
+      }
+      return (success, board, goalColor);
+    }
+
+
+
+  }
+
+}
