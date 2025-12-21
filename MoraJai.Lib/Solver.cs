@@ -1,17 +1,18 @@
 namespace MoraJai.Lib;
 
-
 public class Solver
 {
+    private int MaxLevels {get; set;}
 
     // to avoid cycles
     private HashSet<int> visitedStates = new HashSet<int>();
 
     private SolutionNode? deepestNode = null;
 
-    public SolutionNode? SolveStart(GameState initState)
+    public SolutionNode? SolveStart(GameState initState, int maxLevels = 15)
     {
         var root = new SolutionNode(initState, null, (-1, -1));
+        MaxLevels = maxLevels;
         return Solve(root);
     }
 
@@ -38,6 +39,12 @@ public class Solver
             if (currentNode.State.IsSolved())
             {
                 return currentNode;
+            }
+
+            if(currentNode.Depth >= MaxLevels)
+            {
+                Console.WriteLine("Max levels reached.");
+                break;
             }
 
             for (int r = 0; r < 3; r++)
