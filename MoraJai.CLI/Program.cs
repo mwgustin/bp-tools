@@ -8,7 +8,7 @@ if (args.Length > 0 && (args[0] == "-h" || args[0] == "--help" || args[0] == "he
     Console.WriteLine("Usage:");
     Console.WriteLine("  MoraJai.CLI                      Run in interactive mode");
     Console.WriteLine("  MoraJai.CLI -generate [amount]   Generate new challenge puzzles (default: 50)");
-    Console.WriteLine("  MoraJai.CLI -file [path]         Solve a random challenge from a file");
+    Console.WriteLine("  MoraJai.CLI -file [path] [id]    Solve a challenge from a file (random if id not specified)");
     Console.WriteLine("  MoraJai.CLI -h | --help        Show this help message\n");
     Console.WriteLine("Interactive Mode:");
     Console.WriteLine("  You will be prompted to enter the colors of each line of the board,");
@@ -20,6 +20,7 @@ if (args.Length > 0 && (args[0] == "-h" || args[0] == "--help" || args[0] == "he
     }
     Console.WriteLine("\nExamples:");
     Console.WriteLine("  MoraJai.CLI -file challenges.json");
+    Console.WriteLine("  MoraJai.CLI -file challenges.json 123");
     Console.WriteLine("  MoraJai.CLI -generate");
     Console.WriteLine("  MoraJai.CLI -generate 100");
     return;

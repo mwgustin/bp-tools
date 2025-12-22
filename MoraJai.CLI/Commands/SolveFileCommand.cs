@@ -22,9 +22,22 @@ public class SolveFileCommand : ICommand
 
         Console.WriteLine($"Loaded {collection.Challenges.Count} challenges from {filePath}");
 
-        //select random challenge then solve it
-        Random rand = new Random();
-        var challenge = collection.Challenges[rand.Next(collection.Challenges.Count)];
+        // Select challenge by ID if provided, otherwise random
+        ChallengeJson? challenge;
+        if (args.Length > 2 && int.TryParse(args[2], out int challengeId))
+        {
+            challenge = collection.Challenges.FirstOrDefault(c => c.Id == challengeId);
+            if (challenge is null)
+            {
+                Console.WriteLine($"Challenge with ID {challengeId} not found.");
+                return;
+            }
+        }
+        else
+        {
+            Random rand = new Random();
+            challenge = collection.Challenges[rand.Next(collection.Challenges.Count)];
+        }
         Console.WriteLine($"Solving Challenge ID: {challenge.Id}, Rating: {challenge.ChallengeRating}");
         var loadedInitState = challenge.ToGameState();
         var solver = new Solver();
