@@ -135,14 +135,8 @@ public class GameStateTests
         var goals = new TileColor[] { TileColor.Red, TileColor.Green, TileColor.Blue, TileColor.Red };
         var gameState = new GameState(board, goals);
 
-        var expectedString =
-            "Red    | Blue   | Red    \n" +
-            "-----------------------\n" +
-            "Green  | Yellow | Green  \n" +
-            "-----------------------\n" +
-            "Red    | Blue   | Red    \n";
-        var result = gameState.ToString();
-        await Assert.That(result).IsEqualTo(expectedString);
+        // Act & Assert
+        await Verify(gameState.ToString());
     }
 
 }

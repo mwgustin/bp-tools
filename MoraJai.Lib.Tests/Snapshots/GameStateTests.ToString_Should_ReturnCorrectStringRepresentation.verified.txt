@@ -1,0 +1,6 @@
+﻿Red    | Blue   | Red    
+-----------------------
+Green  | Yellow | Green  
+-----------------------
+Red    | Blue   | Red    
+Goal Corners: Red, Green, Blue, Red
