@@ -5,10 +5,12 @@
     <Nullable>enable</Nullable>
     <OutputType>Exe</OutputType>
     <TargetFramework>net10.0</TargetFramework>
+    <EnableMicrosoftTestingPlatform>true</EnableMicrosoftTestingPlatform>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="TUnit" Version="0.57.1" />
+    <PackageReference Include="TUnit" Version="1.6.5" />
+    <PackageReference Include="Verify.TUnit" Version="31.9.0" />
   </ItemGroup>
 
   <ItemGroup>

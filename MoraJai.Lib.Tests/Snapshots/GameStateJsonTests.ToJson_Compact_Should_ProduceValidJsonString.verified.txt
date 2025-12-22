@@ -1,0 +1,1 @@
+﻿{"challengeRating":1,"board":[["Red","Red","Red"],["Blue","Blue","Blue"],["Green","Green","Green"]],"goal":["Red","Blue","Green","Red"]}

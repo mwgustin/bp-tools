@@ -132,4 +132,16 @@ public class ChallengeJson : GameStateJson
             Goal = baseJson.Goal
         };
     }
+
+    /// <summary>
+    /// Serializes to JSON string, ensuring Id is included
+    /// </summary>
+    public new string ToJson(bool indented = true)
+    {
+        var options = new JsonSerializerOptions
+        {
+            WriteIndented = indented
+        };
+        return JsonSerializer.Serialize<ChallengeJson>(this, options);
+    }
 }

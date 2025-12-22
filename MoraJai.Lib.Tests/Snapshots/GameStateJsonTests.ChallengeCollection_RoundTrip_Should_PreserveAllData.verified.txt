@@ -1,0 +1,31 @@
+﻿{
+  Challenges: [
+    {
+      Id: 99,
+      ChallengeRating: 1,
+      Board: [
+        [
+          Red,
+          Blue,
+          Green
+        ],
+        [
+          Yellow,
+          Orange,
+          Pink
+        ],
+        [
+          Gray,
+          Black,
+          Violet
+        ]
+      ],
+      Goal: [
+        Red,
+        Blue,
+        Green,
+        Yellow
+      ]
+    }
+  ]
+}

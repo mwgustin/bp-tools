@@ -1,0 +1,26 @@
+﻿{
+  ChallengeRating: 2,
+  Board: [
+    [
+      Red,
+      Blue,
+      Green
+    ],
+    [
+      Yellow,
+      Orange,
+      Pink
+    ],
+    [
+      Gray,
+      Black,
+      Violet
+    ]
+  ],
+  Goal: [
+    Red,
+    Blue,
+    Green,
+    Yellow
+  ]
+}

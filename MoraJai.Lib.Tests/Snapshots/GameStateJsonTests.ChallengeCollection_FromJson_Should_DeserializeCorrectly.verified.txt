@@ -1,0 +1,58 @@
+﻿{
+  Challenges: [
+    {
+      Id: 1,
+      ChallengeRating: 2,
+      Board: [
+        [
+          Red,
+          Red,
+          Red
+        ],
+        [
+          Blue,
+          Blue,
+          Blue
+        ],
+        [
+          Green,
+          Green,
+          Green
+        ]
+      ],
+      Goal: [
+        Red,
+        Blue,
+        Green,
+        Red
+      ]
+    },
+    {
+      Id: 2,
+      ChallengeRating: 3,
+      Board: [
+        [
+          Yellow,
+          Orange,
+          Pink
+        ],
+        [
+          Gray,
+          Black,
+          Violet
+        ],
+        [
+          Red,
+          Blue,
+          Green
+        ]
+      ],
+      Goal: [
+        Yellow,
+        Orange,
+        Pink,
+        Gray
+      ]
+    }
+  ]
+}
