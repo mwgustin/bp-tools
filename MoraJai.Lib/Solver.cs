@@ -9,7 +9,7 @@ public class Solver
 
     private SolutionNode? deepestNode = null;
 
-    public SolutionNode? SolveStart(GameState initState, int maxLevels = 15)
+    public SolutionNode? SolveStart(GameState initState, int maxLevels = 20)
     {
         var root = new SolutionNode(initState, null, (-1, -1));
         MaxLevels = maxLevels;
