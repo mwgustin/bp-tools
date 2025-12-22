@@ -4,10 +4,11 @@ namespace MoraJai.Lib;
 
 public enum ChallengeRating
 {
-    Easy,
-    Medium,
-    Hard
+    Easy = 1,
+    Medium = 2,
+    Hard = 3
 }
+
 
 /// <summary>
 /// Generator for creating new initial solvable puzzles
@@ -15,14 +16,14 @@ public enum ChallengeRating
 public class Generator
 {
 
-    private ChallengeRating? DepthToChallengeRating(int? depth) => depth switch
+    public ChallengeRating? DepthToChallengeRating(int? depth)
     {
-        null => null,
-        <= 1 => null,
-        <= 7 => ChallengeRating.Easy,
-        <= 10 => ChallengeRating.Medium,
-        _ => ChallengeRating.Hard
-    };
+        if (depth is null || depth < 1) return null;
+
+        if (depth <= 7) return ChallengeRating.Easy;
+        else if (depth <= 12) return ChallengeRating.Medium;
+        else return ChallengeRating.Hard;
+    }
 
 
     public Dictionary<ChallengeRating, List<GameState>> Generate(int count, int? seed = null)

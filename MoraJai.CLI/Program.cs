@@ -1,141 +1,41 @@
 ﻿using MoraJai.Lib;
+using MoraJai.CLI.Commands;
 
 // help text
 if (args.Length > 0 && (args[0] == "-h" || args[0] == "--help" || args[0] == "help"))
 {
-    Console.WriteLine("This program solves a 3x3 Mora Jai tile color puzzle.");
-    Console.WriteLine("You will be prompted to enter the colors of each line of the board, followed by the goal color.");
-    Console.WriteLine("Colors should be entered as space-separated values. Valid colors are:");
+    Console.WriteLine("MoraJai CLI - A 3x3 Mora Jai tile color puzzle solver\n");
+    Console.WriteLine("Usage:");
+    Console.WriteLine("  MoraJai.CLI                      Run in interactive mode");
+    Console.WriteLine("  MoraJai.CLI -generate [amount]   Generate new challenge puzzles (default: 50)");
+    Console.WriteLine("  MoraJai.CLI -file [path]         Solve a random challenge from a file");
+    Console.WriteLine("  MoraJai.CLI -h | --help        Show this help message\n");
+    Console.WriteLine("Interactive Mode:");
+    Console.WriteLine("  You will be prompted to enter the colors of each line of the board,");
+    Console.WriteLine("  followed by the goal color. Colors should be entered as space-separated values.\n");
+    Console.WriteLine("Valid colors:");
     foreach (var color in Enum.GetNames(typeof(TileColor)))
     {
-        Console.WriteLine($"- {color.ToLower()}");
+        Console.WriteLine($"  - {color.ToLower()}");
     }
+    Console.WriteLine("\nExamples:");
+    Console.WriteLine("  MoraJai.CLI -file challenges.json");
+    Console.WriteLine("  MoraJai.CLI -generate");
+    Console.WriteLine("  MoraJai.CLI -generate 100");
     return;
 }
 
 if(args.Length > 0 && args[0] == "-generate")
 {
-    var gen = new Generator();
-    var amount = 20;
-    var genResults = gen.Generate(amount);
-
-    int total = genResults.Sum(x => x.Value.Count);
-    int easy = genResults.Where(x => x.Key == ChallengeRating.Easy).Select(x => x.Value.Count).First();
-    int medium = genResults.Where(x => x.Key == ChallengeRating.Medium).Select(x => x.Value.Count).First();
-    int hard = genResults.Where(x => x.Key == ChallengeRating.Hard).Select(x => x.Value.Count).First();
-    Console.WriteLine($"{total} successes of {amount} generated");
-    Console.WriteLine($"Easy: {easy}");
-    Console.WriteLine($"Medium: {medium}");
-    Console.WriteLine($"Hard: {hard}");
-
-    foreach(var rating in genResults.Keys)
-    {
-        var states = genResults[rating];
-        int count = 1;
-        foreach(var state in states)
-        {
-            Console.WriteLine($"--- {rating} Puzzle {count} ---");
-            Console.WriteLine(state);
-            count++;
-        }
-    }
-
-    // (var success, var state, var depth) = gen.GenerateSolvablePuzzle();
-
-    // Console.WriteLine($"Generated solvable: {success}");
-    // if(!success) return;
-    // Console.WriteLine("MaxDepth: " + depth);
-    // Console.WriteLine("State: ");
-    // Console.WriteLine(state);
-    
-    
+    new GenerateCommand().Execute(args);
     return;
 }
 
-
-// get user input and split into array
-Console.WriteLine("Please enter line 1 of the board:");
-var line1 = Console.ReadLine();
-Console.WriteLine("Please enter line 2 of the board:");
-var line2 = Console.ReadLine();
-Console.WriteLine("Please enter line 3 of the board:");
-var line3 = Console.ReadLine();
-
-Console.WriteLine("Please enter the goal color(s):");
-var goalColorInput = Console.ReadLine();
-
-if (line1 is null || line2 is null || line3 is null || goalColorInput is null)
+if(args.Length > 0 && args[0] == "-file")
 {
-    Console.WriteLine("Invalid input");
+    new SolveFileCommand().Execute(args);
     return;
 }
 
-var line1colors = line1.Split(' ');
-var line2colors = line2.Split(' ');
-var line3colors = line3.Split(' ');
-
-if (line1colors.Length != 3 || line2colors.Length != 3 || line3colors.Length != 3)
-{
-    Console.WriteLine("Each line must contain exactly 3 colors");
-    return;
-}
-
-var goalColors = goalColorInput.Split(' ');
-if (goalColors.Length == 1)
-{
-    goalColors = new string[] { goalColors[0], goalColors[0], goalColors[0], goalColors[0] };
-}
-else if (goalColors.Length != 4)
-{
-    Console.WriteLine("Goal must contain exactly 1 or 4 colors");
-    return;
-}
-
-TileColor[,] board = new TileColor[3, 3];
-TileColor[] goalColor = new TileColor[4];
-try
-{
-    // parse colors from input
-    for (int i = 0; i < 3; i++)
-    {
-        board[0, i] = Enum.Parse<TileColor>(line1colors[i], true);
-        board[1, i] = Enum.Parse<TileColor>(line2colors[i], true);
-        board[2, i] = Enum.Parse<TileColor>(line3colors[i], true);
-    }
-
-    for (int i = 0; i < 4; i++)
-    {
-        goalColor[i] = Enum.Parse<TileColor>(goalColors[i], true);
-    }
-}
-catch (ArgumentException)
-{
-    Console.WriteLine("Invalid color input. Please use valid color names.");
-    Console.WriteLine("Valid color options are:");
-    foreach (var color in Enum.GetNames(typeof(TileColor)))
-    {
-        Console.WriteLine($"- {color.ToLower()}");
-    }
-    return;
-}
-
-
-// create initial game state
-var initState = new GameState(
-  board: board,
-  Goal: goalColor
-);
-var solver = new Solver();
-var result = solver.SolveStart(initState);
-
-
-// print results
-if (result is null) Console.WriteLine("No solution found");
-else
-{
-    Console.WriteLine("Solution found:");
-    foreach (var item in SolutionNode.GetSolution(result))
-    {
-        Console.WriteLine(item);
-    }
-}
+// Default: interactive mode
+new SolveInteractiveCommand().Execute(args);
