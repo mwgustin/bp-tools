@@ -13,6 +13,45 @@ if (args.Length > 0 && (args[0] == "-h" || args[0] == "--help" || args[0] == "he
     return;
 }
 
+if(args.Length > 0 && args[0] == "-generate")
+{
+    var gen = new Generator();
+    var amount = 20;
+    var genResults = gen.Generate(amount);
+
+    int total = genResults.Sum(x => x.Value.Count);
+    int easy = genResults.Where(x => x.Key == ChallengeRating.Easy).Select(x => x.Value.Count).First();
+    int medium = genResults.Where(x => x.Key == ChallengeRating.Medium).Select(x => x.Value.Count).First();
+    int hard = genResults.Where(x => x.Key == ChallengeRating.Hard).Select(x => x.Value.Count).First();
+    Console.WriteLine($"{total} successes of {amount} generated");
+    Console.WriteLine($"Easy: {easy}");
+    Console.WriteLine($"Medium: {medium}");
+    Console.WriteLine($"Hard: {hard}");
+
+    foreach(var rating in genResults.Keys)
+    {
+        var states = genResults[rating];
+        int count = 1;
+        foreach(var state in states)
+        {
+            Console.WriteLine($"--- {rating} Puzzle {count} ---");
+            Console.WriteLine(state);
+            count++;
+        }
+    }
+
+    // (var success, var state, var depth) = gen.GenerateSolvablePuzzle();
+
+    // Console.WriteLine($"Generated solvable: {success}");
+    // if(!success) return;
+    // Console.WriteLine("MaxDepth: " + depth);
+    // Console.WriteLine("State: ");
+    // Console.WriteLine(state);
+    
+    
+    return;
+}
+
 
 // get user input and split into array
 Console.WriteLine("Please enter line 1 of the board:");

@@ -73,6 +73,7 @@ public record GameState : IEquatable<GameState>
             sb.AppendLine();
             if (r < 2) sb.AppendLine(new string('-', 23));
         }
+        sb.AppendLine("Goal Corners: " + string.Join(", ", Goal));
         return sb.ToString();
     }
 

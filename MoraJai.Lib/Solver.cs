@@ -43,7 +43,7 @@ public class Solver
 
             if(currentNode.Depth >= MaxLevels)
             {
-                Console.WriteLine("Max levels reached.");
+                // Console.WriteLine("Max levels reached.");
                 break;
             }
 
@@ -64,8 +64,8 @@ public class Solver
             }
         }
 
-        Console.WriteLine("No solution found, deepest state reached: " + deepestNode?.Depth);
-        Console.WriteLine(deepestNode);
+        // Console.WriteLine("No solution found, deepest state reached: " + deepestNode?.Depth);
+        // Console.WriteLine(deepestNode);
         return null;
     }
 }
