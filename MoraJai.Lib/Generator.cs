@@ -16,7 +16,7 @@ public enum ChallengeRating
 public class Generator
 {
 
-    public ChallengeRating? DepthToChallengeRating(int? depth)
+    public static ChallengeRating? DepthToChallengeRating(int? depth)
     {
         if (depth is null || depth < 1) return null;
 
