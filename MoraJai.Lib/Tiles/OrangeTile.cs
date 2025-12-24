@@ -11,10 +11,10 @@ public class OrangeTile : ITile
 
         var adjacentPositions = new (int, int)[]
         {
-      (row - 1, col), // Up
-      (row + 1, col), // Down
-      (row, col - 1), // Left
-      (row, col + 1)  // Right
+            (row - 1, col), // Up
+            (row + 1, col), // Down
+            (row, col - 1), // Left
+            (row, col + 1)  // Right
         };
 
         var colorCount = new Dictionary<TileColor, int>();
